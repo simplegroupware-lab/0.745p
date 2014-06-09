@@ -1,9 +1,7 @@
-0.745p
-======
+a patch of simple groupware v0.745
+==================================
 
-a Patch of Simple Groupware v0.745
-
-Changes
+changes
 =======
 - changed from mysql library to mysqli library
 
