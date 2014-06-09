@@ -1,4 +1,4 @@
-a patch of simple groupware v0.745
+patched from simple groupware v0.745
 ==================================
 
 changes
