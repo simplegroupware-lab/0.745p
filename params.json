@@ -1,1 +1,1 @@
-{"name":"0.745p","tagline":"a patch of Simple Groupware v0.745","body":"0.745p\r\n======\r\n\r\na patch of Simple Groupware v0.745\r\n\r\nChanges\r\n=======\r\n- changed from mysql library to mysqli library\r\n\r\n","google":"","note":"Don't delete this file! It's used internally to help with page regeneration."}
+{"name":"Simple Groupware Patch","tagline":"a patch of version 0.745","body":"Changes\r\n=======\r\n- changed from mysql library to mysqli library\r\n\r\n","google":"","note":"Don't delete this file! It's used internally to help with page regeneration."}
