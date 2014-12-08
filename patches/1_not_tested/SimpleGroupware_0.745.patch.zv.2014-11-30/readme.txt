@@ -1,7 +1,7 @@
 
 * FILE:		readme.txt
 * Date:		2014-11-30
-* Changed:	2014-12-04
+* Changed:	2014-12-08
 * Author:	Vlad Zaritsky
 
 
@@ -65,7 +65,7 @@
 *3.8 /SimpleGroupware_0.745/src/download.php
     The same as previous.
 
-*3.9 /SimpleGroupware_0.745/src/function.php
+*3.9 /SimpleGroupware_0.745/src/core/function.php
     The same as previous.
 
 *3.10 /SimpleGroupware_0.745/src/core/setup.php
