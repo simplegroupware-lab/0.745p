@@ -11,3 +11,7 @@ please add a readme containing:
 ownership means:
 you reply to questions, you maintain, you improve.
 a 3rdparty addition without ownership is basically unmanaged
+
+to upload
+------------------------------------------------------
+please use simplegroupwarelab@gmail.com or join github

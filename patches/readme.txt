@@ -6,3 +6,7 @@
 
 3. if patches in folder '2_tested' are suitable for integration into 0.745p
    they will be integrated and then put into '3_integrated'
+
+to upload
+------------------------------------------------------
+please use simplegroupwarelab@gmail.com or join github
