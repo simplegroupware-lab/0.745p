@@ -7,21 +7,20 @@
 **INSTALLATION**
 
     Way #1
-	- unpack original SimpleGroupware_0.745.tar.gz;
+	- unpack original <this repo>/release/SimpleGroupware_0.745.tar.gz;
 	- unpack and overwrite files from today patch file named SimpleGroupware_0.745.patch.XX.YYYY-MM-DD.tar.gz;
 	- you need last day archive only (all changes accumulated);
 	- to remove the <sgs>/simple_store/config.php and make new install of Simple Groupware using your browser.
 
     Way #2
-	- unpack compound archive from /versions/xxxx
+	- unpack compound archive from <this repo>/branches/xxxx
 	- to remove the <sgs>/simple_store/config.php and make new install of Simple Groupware using your browser.
 
 
 
 **1 Directory description**
 
- Today's tar archive consist Simple Groupware patches with keeping original tree structure
- Version SGW 0.745
+ Today's tar archive consist Simple Groupware patches with keeping original tree structure Version SGW 0.745.
 
 
 
