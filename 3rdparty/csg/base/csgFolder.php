@@ -16,7 +16,7 @@ class
 	{
 
 		$this -> schema = $schema;
-		$this -> view = new csgView ($schema, $activate_filter);
+		$this -> view = new csgView ($this, $activate_filter);
 		$this -> autorefresh = $autorefresh;
 		$this -> assets = array();
 		
@@ -36,6 +36,8 @@ class
 				return $this->view;
 			case "assets":
 				return $this->assets;
+			case "schema":
+				return $this->schema;
 		}
 		throw new csgPropertyNotFoundException ($name);
 	}
@@ -191,7 +193,7 @@ class
 	
 	
 	// load assets from database
-	protected function assets_from_db($limit = "",array $ids=array())
+	protected function assets_from_db($limit = 100,array $ids=array())
 	{
 		return ajax::asset_get_rows(
 			$this->schema->folder_id,

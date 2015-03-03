@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	/**************************************************************************\
+	* csgFPDF                                                                  *
+	\**************************************************************************/
+-->
+<table modulename="FPDP" default_view="display" limit="20" enable_new="true" enable_edit="true" enable_delete="true" enable_empty="true" >
+
+  <view name="display" displayname="Display" >
+  </view>
+  
+  <!-- this view is used by export_to_pdf script -->
+  <view name="csg" visibility="hidden" nosqlfolder="true">
+  </view>
+
+  <field name="name" displayname="Name" simple_type="text" unique="true" required="true" >
+  </field>
+
+  <field name="orientation" displayname="Orientation" simple_type="select" simple_Size="1" simple_default="P" dbsize="1" required="true" >
+	<data title="Orientation" values="P_##_Portrait|L_##_Landscape"/>
+	<description hint="FPDF Constructor" value="nWin('http://www.fpdf.org/en/doc/fpdf.htm');"/>
+  </field>
+  <field name="unit" displayname="Unit" simple_type="select"  simple_Size="1" dbsize="2" simple_default="mm" required="true" >
+	<data title="Unit" values="pt_##_Point|mm_##_Millimeter|cm_##_Centimeter|in_##_Inch"/>
+	<description hint="FPDF Constructor" value="nWin('http://www.fpdf.org/en/doc/fpdf.htm');"/>
+  </field>
+
+  <field name="size" displayname="Size" simple_type="select" simple_Size="1" simple_default="A4" required="true" >
+	<data title="Size" values="A2|A4|A5|Letter|Legal"/>
+	<description hint="FPDF Constructor" value="nWin('http://www.fpdf.org/en/doc/fpdf.htm');"/>
+  </field>
+
+  <field name="leftmargin" displayname="LeftMargin" simple_type="float" simple_default="10">
+	<description hint="FPDF Constructor" value="nWin('http://www.fpdf.org/en/doc/setmargins.htm');"/>
+  </field>
+  <field name="topmargin" displayname="TopMargin" simple_type="float" simple_default="10">
+	<description hint="FPDF Constructor" value="nWin('http://www.fpdf.org/en/doc/setmargins.htm');"/>
+  </field>
+  <field name="rightmargin" displayname="RightMargin" simple_type="float" simple_default="10">
+	<description hint="FPDF Constructor" value="nWin('http://www.fpdf.org/en/doc/setmargins.htm');"/>
+  </field>
+  <field name="bottommargin" displayname="BottomMargin" simple_type="float" simple_default="10">
+	<description hint="FPDF Constructor" value="nWin('http://www.fpdf.org/en/doc/setmargins.htm');"/>
+  </field>
+
+  </table>

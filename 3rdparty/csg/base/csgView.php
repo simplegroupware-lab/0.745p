@@ -10,9 +10,10 @@ class
 
 // creation
 
-	public function __construct(csgSchema $schema, $activate_filter = false)
+	public function __construct(csgFolder $folder, $activate_filter = false)
 	{
-		$this -> schema = $schema;
+		$this -> folder = $folder;
+		$this -> schema = $folder -> schema;
 		$this -> filter_is_activated = $activate_filter;
 		$this -> filters = array();
 	}
@@ -31,6 +32,10 @@ class
 			} else {
 				$this -> filters[$name] = $filter;
 			}
+			if ($this -> folder -> is_autorefresh())
+			{
+				$this -> folder -> refresh();
+			}
 		}
 		else
 		{
@@ -45,6 +50,10 @@ class
 		if (!empty($name) and array_key_exists( $name, $this -> filters ))
 		{
 			unset($this -> filters[$name]);
+			if ($this -> folder -> is_autorefresh())
+			{
+				$this -> folder -> refresh();
+			}
 		}
 	}
 	
@@ -52,6 +61,10 @@ class
 	// resets filter to none
 	public function reset_filter() {
 		$this->filters = array();
+		if ($this -> folder -> is_autorefresh())
+		{
+			$this -> folder -> refresh();
+		}
 	}
 
 
@@ -107,6 +120,7 @@ class
 	
 // Implementation
 
+	protected $folder;
 	protected $schema;
 	protected $filter_is_activated;
 	

@@ -16,7 +16,7 @@ abstract class
 	const default_script_directory = "../custom/ext/lib/";
 	const default_resource_name = "csg";
 
-	// process the resource defined by $r_name
+	// process the resource defined by $resource
 	public static function process_session_request(
 			$resource = self::default_resource_name,
 			$script_directory = self::default_script_directory)
@@ -44,6 +44,13 @@ abstract class
 		return ((empty(self::$resource_name))
 				? self::default_resource_name
 				: self::$resource_name);
+	}
+	
+	// directory where sgs is installed
+	public static function get_sgs_directory()
+	{
+		$dir = dirname($_SERVER['SCRIPT_FILENAME']);
+		return substr($dir,0,strlen($dir)-3);
 	}
 	
 	

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	/**************************************************************************\
+	* csgFPDFMultiCell                                                         *
+	\**************************************************************************/
+-->
+<table modulename="FPDPMultiCell" default_view="display" limit="100" orderby="fpdf" order="asc" enable_new="true" enable_edit="true" enable_delete="true" enable_empty="true" >
+
+  <view name="display" displayname="Display">
+  </view>
+
+  <!-- this view is used by script export_to_pdf -->
+  <view name="csg" visibility="hidden" nosqlfolder="true">
+  </view>
+  
+  <rowvalidate name="doublecells" fields="fpdf|row|col" function="itemsexist|simple_csgFPDFMultiCells|fpdf,row,col"/>
+
+  <field name="fpdf" displayname="FPDF" simple_type="select" simple_size="1" required="true" >
+	<data title="FPDF" function="dbselect|simple_csgFPDFTemplates|id, name|||10"/>
+	<filter views="all" function="linkselect||simple_csgFPDFTemplates|id,name|id=@fpdf@|name"/>
+  </field>
+
+  <field name="row" displayname="Row" simple_type="int" required="true" >
+  </field>
+  <field name="col" displayname="Col" simple_type="int" required="true" >
+  </field>
+  <field name="text" displayname="Text" simple_type="text" simple_default="default Text">
+  </field>
+
+  <field name="width" displayname="Width" simple_type="float" required="true" >
+	<description hint="FPDF MultiCell" value="nWin('http://www.fpdf.org/en/doc/multicell.htm');"/>
+  </field>
+  <field name="height" displayname="Height" simple_type="float" required="true" >
+	<description hint="FPDF MultiCell" value="nWin('http://www.fpdf.org/en/doc/multicell.htm');"/>
+  </field>
+  <field name="font_name" displayname="Font" simple_type="select" simple_size="1" simple_default="Arial" required="true">
+	<data title="Font" values="Courier|Arial|Helvetica|Times|Symbol|ZapfDingbats"/>
+	<description hint="FPDF MultiCell" value="nWin('http://www.fpdf.org/en/doc/setfont.htm');"/>
+  </field>
+  <field name="font_size" displayname="FontSize" simple_type="int" simple_default="12" required="true">
+	<description hint="FPDF MultiCell" value="nWin('http://www.fpdf.org/en/doc/setfont.htm');"/>
+  </field>
+  <field name="font_style" displayname="FontStyle" simple_type="select" simple_size="1" dbsize="3">
+	<data title="Font Style" values="B_##_Bold|I_##_Italic|U_##_Underline"/>
+	<description hint="FPDF MultiCell" value="nWin('http://www.fpdf.org/en/doc/setfont.htm');"/>
+  </field>
+  <field name="border" displayname="Border" simple_type="text" simple_default="0" simple_size="1" required="true" dbsize="4">
+	<description hint="FPDF MultiCell" value="nWin('http://www.fpdf.org/en/doc/multicell.htm');"/>
+  </field>
+  <field name="align" displayname="Align" simple_type="select" simple_default="J" simple_size="1" required="true" dbsize="1">
+	<data title="Alignement" values="L_##_Left|C_##_Center|R_##_Right|J_##_Justification"/>
+	<description hint="FPDF MultiCell" value="nWin('http://www.fpdf.org/en/doc/multicell.htm');"/>
+  </field>
+  <field name="fill" displayname="FillBackground" simple_type="checkbox" simple_default="0" notinall="true">
+	<description hint="FPDF MultiCell" value="nWin('http://www.fpdf.org/en/doc/multicell.htm');"/>
+  </field>
+  <field name="fill_color" displayname="FillColor" simple_type="text" required="true" >
+	<description hint="FPDF MultiCell" value="nWin('http://www.fpdf.org/en/doc/setfillcolor.htm');"/>
+   </field>
+  <field name="text_color" displayname="TextColor" simple_type="text" required="true" >
+	<description hint="FPDF MultiCell" value="nWin('http://www.fpdf.org/en/doc/settextcolor.htm');"/>
+  </field>
+  <field name="draw_color" displayname="DrawColor" simple_type="text" required="true" >
+	<description hint="FPDF MultiCell" value="nWin('http://www.fpdf.org/en/doc/setdrawcolor.htm');"/>
+  </field>
+  <field name="line_width" displayname="BorderWidth" simple_type="float" required="true" >
+  </field>
+
+</table>
