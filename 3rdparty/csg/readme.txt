@@ -2,8 +2,8 @@ Date: 2015-03-23
 Contributed by: Patrick Pliessnig
 Owner: Patrick Pliessnig
 
-custom simple groupware framework for easy php scripting for sgs
-----------------------------------------------------------------
+custom simple groupware framework
+for easy php scripting for sgs
 
 Usage:
 -----------------------------------------------------------
