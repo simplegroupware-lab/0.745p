@@ -7,10 +7,11 @@ for easy php scripting for sgs
 
 Usage:
 -----------------------------------------------------------
-- base is the basic functionality
-- pdf is an extension to export data to pdf - based on fpdf.org
-- for info check the pdf documentation.
-- to download, just download the zip files
+- base directory contains the basic functionality
+- pdf directory contains an extension to export data to pdf - based on fpdf.org
+- for more info check the included pdf documentation.
+- to download, download the zip files
+- to install, check the pdf documentation
 
 
 Useful for:
