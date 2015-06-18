@@ -2802,12 +2802,18 @@ function sys_contains($haystick, $needle) {
 
 function sys_die($str,$str2="") {
   $str = sys_remove_trans($str);
+  
+  // if $str appears NOT TO INCLUDE html tags, convert special characters to html entities
+  // html-tags and special characters are assumed to exclude each other
+  if ( strcmp( $str, strip_tags($str)) == 0 ) $str = modify::htmlquote($str);
+  if ( strcmp( $str2, strip_tags($str2)) == 0 ) $str2 = modify::htmlquote($str2);
+
   echo "<html><body style='padding:0px;margin:0px;'><center>";
-  if (sys::$alert) echo nl2br(sys_remove_trans(modify::quote(implode("<br>",sys::$alert))))."<br><br>";
+  if (sys::$alert) echo nl2br(sys_remove_trans(modify::htmlquote(implode("<br>",sys::$alert))))."<br><br>";
   echo "<table style='width: 600px;'>";
   echo "<tr><td align='center' style='border-bottom: 1px solid black; letter-spacing: 2px; font-size: 18px; font-weight: bold;'>Simple Groupware & CMS</td></tr>";
-  echo "<tr><td align='center' style='border-bottom: 1px solid black;'>".modify::htmlquote($str)."</td></tr>";
-  if ($str2!="") echo "<tr><td style='border-bottom: 1px solid black;'>".modify::htmlquote($str2)."</td></tr>";
+  echo "<tr><td align='center' style='border-bottom: 1px solid black;'>".$str."</td></tr>";
+  if ($str2!="") echo "<tr><td style='border-bottom: 1px solid black;'>".$str2."</td></tr>";
   echo "</table>Powered by Simple Groupware, Copyright (C) 2002-2012 by Thomas Bley.</center></body></html>";
   exit;
 }
