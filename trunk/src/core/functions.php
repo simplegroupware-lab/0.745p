@@ -1966,7 +1966,7 @@ function login_browser_detect() {
   ) {
     sys::$browser["name"] = $version[1];
 	sys::$browser["ver"] = $version[2];
-  } else if (strpos($agent,"mozilla") and preg_match("|rv:([0-9]\.[0-9]).*?gecko|", $agent,$version)) {
+  } else if (strpos($agent,"mozilla") and preg_match("|rv:([0-9]+\.[0-9]).*?gecko|", $agent,$version)) {
     sys::$browser["name"] = "mozilla";
 	sys::$browser["ver"] = $version[1];
   } else if (preg_match("/googlebot|msnbot|yahoo|baidu|teoma/", $agent)) {
