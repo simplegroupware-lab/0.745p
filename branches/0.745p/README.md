@@ -5,7 +5,7 @@ changes
 -------
 
 Patch 2016/01/06
-- patched pgsql.sql for postgresql 9.2
+- upgraded pgsql.sql for postgresql 9.2
 
 Patch 2015/06/18
 - patched tar.php
