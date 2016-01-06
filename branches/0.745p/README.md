@@ -4,6 +4,9 @@ patched from simple groupware v0.745
 changes
 -------
 
+Patch 2016/01/06
+- patched pgsql.sql for postgresql 9.2
+
 Patch 2015/06/18
 - patched tar.php
 - patched function sys_die in functions.php
@@ -11,5 +14,6 @@ Patch 2015/06/18
 
 Patch 2014/12/09
 - changed from mysql to mysqli library
+
 
 
