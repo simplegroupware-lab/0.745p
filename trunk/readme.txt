@@ -14,4 +14,7 @@
 
  Please describe the changes you made or point to filename with description.
 
+ Migration to PHP 5.4
+ commented out references to magic_quotes_gpc and related functions
+
 *eof*
