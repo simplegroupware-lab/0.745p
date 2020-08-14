@@ -495,7 +495,11 @@ private static function _create_ldap_groups($groups, $username) {
 	if (empty($group)) continue;
 	
 	// decode 2-byte unicode characters
-	$group = preg_replace("/\\\\([A-F0-9]{2})/e",'chr(hexdec("\1"))',$group);
+	// migrate from php 5.4 to 5.5
+	// $group = preg_replace("/\\\\([A-F0-9]{2})/e",'chr(hexdec("\1"))',$group);
+	$group = preg_replace_callback("/\\\\([A-F0-9]{2})/",function($m) { return chr(hexdec($m[1])); },$group);
+
+
 	self::creategroup($group);
 	self::addgroupmember(0, array("username"=>$username), array($group));
   }

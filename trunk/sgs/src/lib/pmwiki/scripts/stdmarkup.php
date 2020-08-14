@@ -88,11 +88,19 @@ function CondText2($pagename, $text, $code = '') {
     list($condspec, $condtext) = array_splice($parts, 0, 2);
     if (!preg_match("/^\\s*(!?)\\s*(\\S*)\\s*(.*?)\\s*$/", $condspec, $match)) continue;
     list($x, $not, $condname, $condparm) = $match;
-    if (!isset($Conditions[$condname])) 
-      return preg_replace($CondTextPattern, $CondTextReplacement, $condtext);
+    if (!isset($Conditions[$condname]))
+		
+	  // migrate from php 5.4 to 5.5
+      // return preg_replace($CondTextPattern, $CondTextReplacement, $condtext);
+	  return PPRE($CondTextPattern, $CondTextReplacement, $condtext);
+	  
     $tf = @eval("return ({$Conditions[$condname]});");
+
     if ($tf xor $not)
-      return preg_replace($CondTextPattern, $CondTextReplacement, $condtext);
+	  // migrate from php 5.4 to 5.5
+      // return preg_replace($CondTextPattern, $CondTextReplacement, $condtext);
+	  return PPRE($CondTextPattern, $CondTextReplacement, $condtext);
+	  
   }
   return '';
 }

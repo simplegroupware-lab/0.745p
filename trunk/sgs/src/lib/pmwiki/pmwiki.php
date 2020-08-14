@@ -79,7 +79,11 @@ function pmwiki_url($url) {
     if (!strpos($url,"&file=")) $url = str_replace("?page=","index.php?find=".PageDbStore::$table."|pagename=",$url);
     if ($url[0]=="?") $url = "cms.php".$url;
   } else if (CMS_REAL_URL) { // frontend real-url
-	$url = preg_replace("/(\?page=[^{&\"']+)/e","str_replace('.','/','\\1')",$url); // Group.Name => Group/Name
+  
+    // migrate from php 5.4 to 5.5
+	// $url = preg_replace("/(\?page=[^{&\"']+)/e","str_replace('.','/','\\1')",$url); // Group.Name => Group/Name
+	$url = preg_replace_callback("/(\?page=[^{&\"']+)/",function($m) { return str_replace('.','/',$m[1]); },$url); // Group.Name => Group/Name
+
 	$url = preg_replace("|(\?page=[^\"']+)&|","\\1?",$url); // ?page=&file => ?page=?file
     $replace = array(
 	  "ext/cms/",
@@ -105,7 +109,11 @@ function pmwiki_url($url) {
 // tb
 function pmwiki_graphviz($data) {
   global $KPV, $KeepToken;
-  $data = preg_replace( "/$KeepToken(\\d+?)$KeepToken/e", '$KPV[$1]', $data); // Unescape: [==]
+
+  // migrate from php 5.4 to 5.5
+  // $data = preg_replace( "/$KeepToken(\\d+?)$KeepToken/e", '$KPV[$1]', $data); // Unescape: [==]
+  $data = preg_replace_callback( "/$KeepToken(\\d+?)$KeepToken/", function($m) { return '$KPV[$1]'; }, $data); // Unescape: [==]
+
   $data = str_replace( array("&gt;","&lt;","<:vspace>"), array(">","<",""), $data);
   $url = pmwiki_url("preview.php?filename=".basename(type_graphviz::render_png($data)));
   return "<img border='0' src='".$url."' />";
@@ -315,17 +323,30 @@ function PZZ($x,$y='') { return ''; }
 function PRR($x=NULL) 
   { if ($x || is_null($x)) $GLOBALS['RedoMarkupLine']++; return $x; }
 function PUE($x)
-  { return preg_replace('/[\\x80-\\xff \'"<>]/e', "'%'.dechex(ord('$0'))", $x); }
+
+  // migrate from php 5.4 to 5.5
+  // { return preg_replace('/[\\x80-\\xff \'"<>]/e', "'%'.dechex(ord('$0'))", $x); }
+  { return PPRE('/[\\x80-\\xff \'"<>]/e', "'%'.dechex(ord(\$m[0]))", $x); }
+
 function PQA($x) { 
   $out = '';
   if (preg_match_all('/([a-zA-Z]+)\\s*=\\s*("[^"]*"|\'[^\']*\'|\\S*)/',
                      $x, $attr, PREG_SET_ORDER)) {
     foreach($attr as $a) {
       if (preg_match('/^on/i', $a[1])) continue;
+	  
+	  // migrate from php 5.4 to 5.5
+      // $out .= $a[1] . '=' 
+      //         . preg_replace( '/^([\'"]?)(.*)\\1$/e', 
+      //             "\"'\".str_replace(\"'\", '&#39;', PSS('$2')).\"'\"", $a[2])
+      //         . ' ';
+
       $out .= $a[1] . '=' 
-              . preg_replace( '/^([\'"]?)(.*)\\1$/e', 
-                  "\"'\".str_replace(\"'\", '&#39;', PSS('$2')).\"'\"", $a[2])
+              . PPRE( '/^([\'"]?)(.*)\\1$/', 
+                  "\"'\".str_replace(\"'\", '&#39;', PSS(\$m[2])).\"'\"", $a[2])
               . ' ';
+
+
     }
   }
   return $out;
@@ -350,6 +371,39 @@ function ParseArgs($x, $optpat = '(?>(\\w+)[:=])') {
   }
   return $z;
 }
+
+// migrate from php 5.4 to 5.5
+// is used in PPRE, see below
+function PCCF($code, $template = 'default', $args = '$m') {
+  global $CallbackFnTemplates, $CallbackFunctions;
+  if(!isset($CallbackFnTemplates[$template]))
+    Abort("No \$CallbackFnTemplates[$template]).");
+  $code = sprintf($CallbackFnTemplates[$template], $code);
+  if(!isset($CallbackFunctions[$code])) {
+    $fn = create_function($args, $code);
+    $CallbackFunctions[$code] = $fn;
+  }
+  return $CallbackFunctions[$code];
+}
+
+// migrate from php 5.4 to 5.5
+// replace preg_replace with preg_replace_callback
+function PPRE($pat, $rep, $x) {
+  $lambda = PCCF("return $rep;");
+  return preg_replace_callback($pat, $lambda, $x);
+}
+
+// migrate from php 5.4 to 5.5
+// replace preg_replace arrays with preg_replace_callback
+function PPRA($array, $x) {
+  foreach($array as $pat => $rep) {
+     if(is_callable($rep)) $x = preg_replace_callback($pat,$rep,$x);
+     else $x = preg_replace($pat,$rep,$x);
+  }
+  return $x;
+}
+
+
 function StopWatch($x) { 
   global $StopWatch, $EnableStopWatch;
   if (!$EnableStopWatch) return;
@@ -578,6 +632,7 @@ function MakePageName($basepage, $str) {
     $MakePageNamePatterns;
   if (@$MakePageNameFunction) return $MakePageNameFunction($basepage, $str);
   SDV($PageNameChars,'-[:alnum:]');
+
   SDV($MakePageNamePatterns, array(
     "/'/" => '',			   # strip single-quotes
     "/[^$PageNameChars]+/" => ' ',         # convert everything else to space
@@ -588,14 +643,16 @@ function MakePageName($basepage, $str) {
   if (count($m)<1 || count($m)>2 || $m[0]=='') return '';
   ##  handle "Group.Name" conversions
   if (@$m[1] > '') {
-    $group = preg_replace(array_keys($MakePageNamePatterns),
-               array_values($MakePageNamePatterns), $m[0]);
-    $name = preg_replace(array_keys($MakePageNamePatterns),
-              array_values($MakePageNamePatterns), $m[1]);
+	  
+	// migrate from php 5.4 to 5.5
+    // See PPRA
+    $group = PPRA($MakePageNamePatterns, $m[0]);
+    $name =  PPRA($MakePageNamePatterns, $m[1]);
     return "$group.$name";
   }
-  $name = preg_replace(array_keys($MakePageNamePatterns),
-            array_values($MakePageNamePatterns), $m[0]);
+  // migrate from php 5.4 to 5.5
+  // See PPRA
+  $name = PPRA($MakePageNamePatterns, $m[0]);
   $isgrouphome = count($m) > 1;
   foreach((array)$PagePathFmt as $pg) {
     if ($isgrouphome && strncmp($pg, '$1.', 3) !== 0) continue;
@@ -640,8 +697,14 @@ function SetProperty($pagename, $prop, $value, $sep=NULL, $keep=NULL) {
   global $PCache, $KeepToken;
   NoCache();
   $prop = "=p_$prop";
-  $value = preg_replace("/$KeepToken(\\d.*?)$KeepToken/e", 
-                        "\$GLOBALS['KPV']['$1']", $value);
+  
+  // migrate from php 5.4 to 5.5
+  //$value = preg_replace("/$KeepToken(\\d.*?)$KeepToken/e", 
+  //                      "\$GLOBALS['KPV']['$1']", $value);
+  $value = PPRE("/$KeepToken(\\d.*?)$KeepToken/",
+                        "\$GLOBALS['KPV'][\$m[1]]", $value);
+  
+  
   if (!is_null($sep) && isset($PCache[$pagename][$prop]))
     $value = $PCache[$pagename][$prop] . $sep . $value;
   if (is_null($keep) || !isset($PCache[$pagename][$prop]))
@@ -713,23 +776,45 @@ function FmtPageName($fmt, $pagename) {
   global $GroupPattern, $NamePattern, $EnablePathInfo, $ScriptUrl,
     $GCount, $UnsafeGlobals, $FmtV, $FmtP, $FmtPV, $PCache, $AsSpacedFunction;
   if (strpos($fmt,'$')===false) return $fmt;
-  $fmt = preg_replace('/\\$([A-Z]\\w*Fmt)\\b/e','$GLOBALS[\'$1\']',$fmt);
-  $fmt = preg_replace('/\\$\\[(?>([^\\]]+))\\]/e',"XL(PSS('$1'))",$fmt);
+  
+  // migrate from php 5.4 to 5.5
+  // $fmt = preg_replace('/\\$([A-Z]\\w*Fmt)\\b/e','$GLOBALS[\'$1\']',$fmt);
+  $fmt = PPRE('/\\$([A-Z]\\w*Fmt)\\b/','$GLOBALS[$m[1]]',$fmt);
+  $fmt = PPRE('/\\$\\[(?>([^\\]]+))\\]/',"XL(PSS(\$m[1]))",$fmt);
+
   $fmt = str_replace('{$ScriptUrl}', '$ScriptUrl', $fmt);
+
+  // migrate from php 5.4 to 5.5
   $fmt = 
-    preg_replace('/\\{(\\$[A-Z]\\w+)\\}/e', "PageVar(\$pagename, '$1')", $fmt);
+  //   preg_replace('/\\{(\\$[A-Z]\\w+)\\}/e', "PageVar(\$pagename, '$1')", $fmt);
+    PPRE('/\\{(\\$[A-Z]\\w+)\\}/', "PageVar('$pagename', \$m[1])", $fmt);
+
+
   if (strpos($fmt,'$')===false) return $fmt;
-  if ($FmtP) $fmt = preg_replace(array_keys($FmtP), array_values($FmtP), $fmt);
+
+  // migrate from php 5.4 to 5.5
+  // if ($FmtP) $fmt = preg_replace(array_keys($FmtP), array_values($FmtP), $fmt);
+  if ($FmtP) $fmt = PPRA($FmtP, $fmt);
+
   static $pv, $pvpat;
   if ($pv != count($FmtPV)) {
     $pvpat = str_replace('$', '\\$', implode('|', array_keys($FmtPV)));
     $pv = count($FmtPV);
   }
-  $fmt = preg_replace("/(?:$pvpat)\\b/e", "PageVar(\$pagename, '$0')", $fmt);
-  $fmt = preg_replace('!\\$ScriptUrl/([^?#\'"\\s<>]+)!e', 
-    (@$EnablePathInfo) ? "'$ScriptUrl/'.PUE('$1')" :
-        "'$ScriptUrl?n='.str_replace('/','.',PUE('$1'))",
+
+  // migrate from php 5.4 to 5.5
+  // $fmt = preg_replace("/(?:$pvpat)\\b/e", "PageVar(\$pagename, '$0')", $fmt);
+  // $fmt = preg_replace('!\\$ScriptUrl/([^?#\'"\\s<>]+)!e', 
+  //   (@$EnablePathInfo) ? "'$ScriptUrl/'.PUE('$1')" :
+  //       "'$ScriptUrl?n='.str_replace('/','.',PUE('$1'))",
+  //   $fmt);
+  $fmt = PPRE("/(?:$pvpat)\\b/", "PageVar('$pagename', \$m[0])", $fmt);
+  $fmt = PPRE('!\\$ScriptUrl/([^?#\'"\\s<>]+)!',
+    (@$EnablePathInfo) ? "'$ScriptUrl/'.PUE(\$m[1])" :
+        "'$ScriptUrl?n='.str_replace('/','.',PUE(\$m[1]))",
     $fmt);
+
+
   if (strpos($fmt,'$')===false) return $fmt;
   static $g;
   if ($GCount != count($GLOBALS)+count($FmtV)) {
@@ -743,8 +828,11 @@ function FmtPageName($fmt, $pagename) {
     krsort($g); reset($g);
   }
   $fmt = str_replace(array_keys($g),array_values($g),$fmt);
-  $fmt = preg_replace('/(?>(\\$[[:alpha:]]\\w+))/e', 
-          "isset(\$FmtV['$1']) ? \$FmtV['$1'] : '$1'", $fmt); 
+
+  // migrate from php 5.4 to 5.5
+  $fmt = PPRE('/(?>(\\$[[:alpha:]]\\w+))/',
+          "isset(\$GLOBALS['FmtV'][\$m[1]]) ? \$GLOBALS['FmtV'][\$m[1]] : \$m[1]", $fmt);
+
   return $fmt;
 }
 
@@ -771,8 +859,12 @@ function FmtTemplateVars($text, $vars, $pagename = NULL) {
   global $FmtPV, $EnableUndefinedTemplateVars;
   if ($pagename) {
     $pat = implode('|', array_map('preg_quote', array_keys($FmtPV)));
-    $text = preg_replace("/\\{\\$($pat)\\}/e", 
-                         "PageVar('$pagename', '$1')", $text);
+
+    // migrate from php 5.4 to 5.5
+    //$text = preg_replace("/\\{\\$($pat)\\}/e", 
+    //                     "PageVar('$pagename', '$1')", $text);
+	$text = PPRE("/\\{\\$($pat)\\}/",
+                         "PageVar('$pagename', \$m[1])", $text);
   }
   foreach(preg_grep('/^[\\w$]/', array_keys($vars)) as $k)
     if (!is_array($vars[$k]))
@@ -1037,7 +1129,11 @@ function Abort($msg, $info='') {
     $info
     <p class='vspace'><a href='$ScriptUrl'>$[Return to] $ScriptUrl</a></p>";
   @header("Content-type: text/html; charset=$Charset");
-  echo preg_replace('/\\$\\[([^\\]]+)\\]/e', "XL(PSS('$1'))", $msg);
+
+  // migrate from php 5.4 to 5.5
+  // echo preg_replace('/\\$\\[([^\\]]+)\\]/e', "XL(PSS('$1'))", $msg);
+  echo PPRE('/\\$\\[([^\\]]+)\\]/', "XL(PSS(\$m[1]))", $msg);
+
   exit;
 }
 
@@ -1108,7 +1204,11 @@ function PrintWikiPage($pagename, $wikilist=NULL, $auth='read') {
 function Keep($x, $pool=NULL) {
   # Keep preserves a string from being processed by wiki markups
   global $BlockPattern, $KeepToken, $KPV, $KPCount;
-  $x = preg_replace("/$KeepToken(\\d.*?)$KeepToken/e", "\$KPV['\$1']", $x);
+
+  // migrate from php 5.4 to 5.5
+  // $x = preg_replace("/$KeepToken(\\d.*?)$KeepToken/e", "\$KPV['\$1']", $x);
+  $x = PPRE("/$KeepToken(\\d.*?)$KeepToken/", "\$GLOBALS['KPV'][\$m[1]]", $x);
+  
   if (is_null($pool) && preg_match("!</?($BlockPattern)\\b!", $x)) $pool = 'B';
   $KPCount++; $KPV[$KPCount.$pool]=$x;
   return $KeepToken.$KPCount.$pool.$KeepToken;
@@ -1120,12 +1220,20 @@ function Keep($x, $pool=NULL) {
 function MarkupEscape($text) {
   global $EscapePattern;
   SDV($EscapePattern, '\\[([=@]).*?\\1\\]');
-  return preg_replace("/$EscapePattern/es", "Keep(PSS('$0'))", $text);
+
+  // migrate from php 5.4 to 5.5
+  // return preg_replace("/$EscapePattern/es", "Keep(PSS('$0'))", $text);
+  return PPRE("/$EscapePattern/s", "Keep(PSS(\$m[0]))", $text);
+  
 }
 function MarkupRestore($text) {
   global $KeepToken, $KPV;
-  return preg_replace("/$KeepToken(\\d.*?)$KeepToken/e", "\$KPV['$1']", $text);
+
+  // migrate from php 5.4 to 5.5
+  // return preg_replace("/$KeepToken(\\d.*?)$KeepToken/e", "\$KPV['$1']", $text);
+  return PPRE("/$KeepToken(\\d.*?)$KeepToken/", "\$GLOBALS['KPV'][\$m[1]]", $text);
 }
+
 
 ##  Qualify() applies $QualifyPatterns to convert relative links
 ##  and references into absolute equivalents.
@@ -1361,7 +1469,12 @@ function LinkIMap($pagename,$imap,$path,$alt,$txt,$fmt=NULL) {
   global $FmtV, $IMap, $IMapLinkFmt, $UrlLinkFmt, $IMapLocalPath;
   SDVA($IMapLocalPath, array('Path:'=>1));
   if(@$IMapLocalPath[$imap]) {
-    $path = preg_replace('/^\\w+:/e', "urlencode('$0')", $path);
+
+    // migrate from php 5.4 to 5.5
+	// TODO
+    // $path = preg_replace('/^\\w+:/e', "urlencode('$0')", $path);
+	$path = preg_replace('/^(\\w+):/', "$1%3a", $path); # PITS:01260
+	
   }
   $FmtV['$LinkUrl'] = PUE(str_replace('$1',$path,$IMap[$imap]));
   $FmtV['$LinkText'] = $txt;
@@ -1494,7 +1607,10 @@ function MarkupToHTML($pagename, $text, $opt = NULL) {
     $RedoMarkupLine=0;
     $markrules = BuildMarkupRules();
     foreach($markrules as $p=>$r) {
-      if ($p{0} == '/') $x=preg_replace($p,$r,$x); 
+      if ($p{0} == '/') {
+		if(is_callable($r)) $x = preg_replace_callback($p,$r,$x);
+        else $x=preg_replace($p,$r,$x);
+	  }
       elseif (strstr($x,$p)!==false) $x=eval($r);
       if (isset($php_errormsg)) 
         { echo "ERROR: pat=$p $php_errormsg"; unset($php_errormsg); }

@@ -7,6 +7,47 @@ This store contains a modified version of Simple Groupware 0.745
  documentation		user manuals and another text documentation
 
 
+**Migrate from PHP 5.4 to PHP 5.5
+
+pack(), unpack()
+----------------
+ changed unpack("a"...) to unpack("Z"...)
+
+MySQL uses already MySQLi
+-------------------------
+nothing done
+
+preg_replace() /e modfier
+-------------------------
+trigger.php: line 500
+IMAP.php: line 1753
+mimeDecode.php: line 597
+mimePart.php: line 409
+
+pmwiki.php:
+line 85, 115, 329, 345, 647, 655, 704, 782, 788, 795, 805, 833, etc
+created function PCCF, PPRE, PPRA
+
+pmwiki/scripts/markupexpr.php
+pmwiki/scripts/pagelist.php
+pmwiki/scripts/pagerev.php
+pmwiki/scripts/stdmarkup.php
+pmwiki/scripts/upload.php
+pmwiki/scripts/wikistyles.php
+pmwiki/scripts/xlpage-utf-8.php
+modules/lib/imap.php
+modules/lib/smtp.php
+
+
+intl deprecations
+-----------------
+not used, nothing done
+
+mcrypt deprecations
+-------------------
+not used, nothing done
+
+
 **Migrate from PHP 5.3 to PHP 5.4
 
 Safe Mode
@@ -33,7 +74,7 @@ especially in pmwiki.php. needs to be tested.
 
 break statement
 ---------------
-there should exist no break statement with $argument, only one break 2 statement.
+there should exist no break statement with $argument, only one "break 2" statement.
 there should exist no continue statement with $argument.
 
 array_combine()

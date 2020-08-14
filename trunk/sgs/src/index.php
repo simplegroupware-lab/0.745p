@@ -53,7 +53,10 @@
   if (CHECK_DOS and !SETUP_AUTH_NTLM_SSO and !DEBUG) pre_sys_checkdos();
   
   require("core/functions.php");
+
+  // template service
   require("lib/smarty/Smarty.class.php");
+
 
   if (!defined("NOCONTENT")) ob_start();
   set_error_handler("debug_handler");

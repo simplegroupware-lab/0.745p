@@ -307,8 +307,12 @@ function PageListIf(&$list, &$opt, $pn, &$page) {
   $Cursor['='] = $pn;
   $varpat = '\\{([=*]|!?[-\\w.\\/\\x80-\\xff]*)(\\$:?\\w+)\\}';
   while (preg_match("/$varpat/", $condspec, $match)) {
-    $condspec = preg_replace("/$varpat/e", 
-                    "PVSE(PageVar(\$pn, '$2', '$1'))", $condspec);
+	  
+	// migrate from php 5.4 to 5.5
+    //$condspec = preg_replace("/$varpat/e", 
+    //                "PVSE(PageVar(\$pn, '$2', '$1'))", $condspec);
+    $condspec = PPRE("/$varpat/",
+                    "PVSE(PageVar('$pn', \$m[2], \$m[1]))", $condspec);					
   }
   if (!preg_match("/^\\s*(!?)\\s*(\\S*)\\s*(.*?)\\s*$/", $condspec, $match)) 
     return 0;
@@ -694,8 +698,13 @@ function FPLExpandItemVars($item, $matches, $idx, $psvars) {
   $Cursor['='] = (string)@$matches[$idx];
   $Cursor['>'] = $Cursor['&gt;'] = (string)@$matches[$idx+1];
   $item = str_replace(array_keys($psvars), array_values($psvars), $item);
-  $item = preg_replace('/\\{(=|&[lg]t;)(\\$:?\\w+)\\}/e',
-              "PVSE(PageVar(\$pn, '$2', '$1'))", $item);
+  
+  // migrate from php 5.4 to 5.5
+  // $item = preg_replace('/\\{(=|&[lg]t;)(\\$:?\\w+)\\}/e',
+  //            "PVSE(PageVar(\$pn, '$2', '$1'))", $item);
+  $item = PPRE('/\\{(=|&[lg]t;)(\\$:?\\w[-\\w]*)\\}/',
+              "PVSE(PageVar('$pn',  \$m[2], \$m[1]))", $item);
+
   if(! IsEnabled($EnableUndefinedTemplateVars, 0))
     $item = preg_replace("/\\{\\$\\$\\w+\\}/", '', $item);
   return $item;

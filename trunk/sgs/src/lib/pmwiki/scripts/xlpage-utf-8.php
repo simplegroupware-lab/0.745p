@@ -103,9 +103,17 @@ function utf8string($str, $start=false, $len=false) { # strlen+substr++ combo fo
   $ascii = preg_match('/[\\x80-\\xFF]/', $str)? 0:1;
   switch ((string)$start) {
     case 'ucfirst': return $ascii ? ucfirst($str) :
-      preg_replace("/^($lower)/e", '$GLOBALS["CaseConversions"]["$1"]', $str);
+	
+	  // migrate from php 5.4 to 5.5
+      // preg_replace("/^($lower)/e", '$GLOBALS["CaseConversions"]["$1"]', $str);
+	  PPRE("/^($lower)/", '$GLOBALS["CaseConversions"][$m[1]]', $str);
+	  
     case 'ucwords': return $ascii ? ucwords($str) :
-      preg_replace("/(^|\\s+)($lower)/e", '"$1".$GLOBALS["CaseConversions"]["$2"]', $str);
+	
+	  // migrate from php 5.4 to 5.5
+      // preg_replace("/(^|\\s+)($lower)/e", '"$1".$GLOBALS["CaseConversions"]["$2"]', $str);
+	  PPRE("/(^|\\s+)($lower)/", '$m[1].$GLOBALS["CaseConversions"][$m[2]]', $str);
+	  
     case 'tolower': return $ascii ? strtolower($str) : utf8fold($str);
     case 'toupper': return $ascii ? strtoupper($str) : utf8toupper($str);
   }

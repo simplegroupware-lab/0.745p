@@ -193,6 +193,12 @@ $AuthList = array('' => 1, 'nopass:' => 1, '@nopass' => 1);
 $SessionEncode = 'base64_encode';
 $SessionDecode = 'base64_decode';
 
+$CallbackFnTemplates = array(
+  'default' => '%s',
+  'markup_e' => 'global $m2h_pn; $pagename = $m2h_pn; return %s;',
+  'qualify'  => 'global $tmp_qualify; extract($tmp_qualify); return %s;',
+);
+
 $Conditions['enabled'] = '(boolean)@$GLOBALS[$condparm]';
 $Conditions['false'] = 'false';
 $Conditions['true'] = 'true';

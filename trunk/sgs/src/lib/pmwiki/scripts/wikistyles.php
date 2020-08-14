@@ -99,9 +99,16 @@ function ApplyStyles($x) {
     $WikiStyleAttr, $WikiStyleCSS, $WikiStyleApply, $BlockPattern,
     $WikiStyleTag, $imgTag, $aTag, $spanTag, $WikiStyleAttrPrefix;
   $wt = @$WikiStyleTag; $ns = $WikiStyleAttrPrefix; $ws = '';
-  $x = preg_replace("/\\b(href|src)=(['\"]?)[^$UrlExcludeChars]+\\2/e", 
+  
+  // migrate from php 5.4 to 5.5
+  // $x = preg_replace("/\\b(href|src)=(['\"]?)[^$UrlExcludeChars]+\\2/e", 
                     "Keep(PSS('$0'))", $x);
-  $x = preg_replace("/\\bhttps?:[^$UrlExcludeChars]+/e", "Keep('$0')", $x);
+  // $x = preg_replace("/\\bhttps?:[^$UrlExcludeChars]+/e", "Keep('$0')", $x);
+  $x =PPRE("/\\b(href|src)=(['\"]?)[^$UrlExcludeChars]+\\2/",
+                    "Keep(PSS(\$m[0]))", $x);
+  $x = PPRE("/\\bhttps?:[^$UrlExcludeChars]+/", "Keep(\$m[0])", $x);
+
+
   $parts = preg_split("/($WikiStylePattern)/",$x,-1,PREG_SPLIT_DELIM_CAPTURE);
   $parts[] = NULL;
   $out = '';

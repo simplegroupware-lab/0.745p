@@ -51,7 +51,11 @@ class sys {
 
   static $warning = array(); // show warning messages
 
-  static $smarty = null; // smarty reference
+
+  // TODO replace $smarty with $displayPort
+  static $smarty = null; // smarty reference  
+  static $displayPort = null; // Type DisplayPort
+
 
   static $urladdon = ""; // auto-append string to URL
 
@@ -71,18 +75,22 @@ class sys {
 		  if (!is_array($val2)) $_REQUEST[$key][$val2] = $val2;
 	} } }
 
-	// refresh smarty cache?
-	if (DEBUG) debug_check_tpl();
+    // TODO replace $smarty with $displayPort
+    self::$displayPort = new DisplayPortUsingSmarty (new Smarty);
+    self::$smarty = self::$displayPort->getTemplateEngine();		
 
-	// set up smarty
-	self::$smarty = new Smarty;
-	self::$smarty->register_prefilter(array("modify","urladdon_quote"));
-	if (isset($_REQUEST["print"])) self::$smarty->register_outputfilter(array("modify","striplinksforms"));
-	if (isset($_REQUEST["print"])) self::$smarty->assign("print",$_REQUEST["print"]);
-	self::$smarty->compile_dir = SIMPLE_CACHE."/smarty";
-	self::$smarty->template_dir = "templates";
-	self::$smarty->config_dir = "templates";
-	self::$smarty->compile_check = false;
+//	// refresh smarty cache?
+//	if (DEBUG) debug_check_tpl();
+
+//	// set up smarty
+//	self::$smarty = new Smarty;
+//	self::$smarty->register_prefilter(array("modify","urladdon_quote"));
+//	if (isset($_REQUEST["print"])) self::$smarty->register_outputfilter(array("modify","striplinksforms"));
+//	if (isset($_REQUEST["print"])) self::$smarty->assign("print",$_REQUEST["print"]);
+//	self::$smarty->compile_dir = SIMPLE_CACHE."/smarty";
+//	self::$smarty->template_dir = "templates";
+//	self::$smarty->config_dir = "templates";
+//	self::$smarty->compile_check = false;
 
 	// set up database
 	if (!sql_connect(SETUP_DB_HOST, SETUP_DB_USER, sys_decrypt(SETUP_DB_PW,sha1(SETUP_ADMIN_USER)), SETUP_DB_NAME)) {

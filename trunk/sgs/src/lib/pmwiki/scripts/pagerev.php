@@ -130,8 +130,13 @@ function DiffHTML($pagename, $diff) {
           $html .= "<div class='diffmarkup'>"
             .$DiffRenderSourceFunction($in, $out, 0)
             ."</div>";
+			
+		// migrate from php 5.4 to 5.5
+        // else $html .= MarkupToHTML($pagename,
+        //    preg_replace('/\\(:.*?:\\)/e',"Keep(htmlspecialchars(PSS('$0')))", join("\n",$in)));
         else $html .= MarkupToHTML($pagename,
-            preg_replace('/\\(:.*?:\\)/e',"Keep(htmlspecialchars(PSS('$0')))", join("\n",$in)));
+          PPRE('/\\(:.*?:\\)/',"Keep(PHSC(PSS(\$m[0])))", join("\n",$in)));
+
         }
         if ($match[4]=='d' || $match[4]=='c') {
           $txt = str_replace('line',$lines,$DiffAddFmt[$match[4]]);
@@ -141,8 +146,13 @@ function DiffHTML($pagename, $diff) {
           $html .= "<div class='diffmarkup'>"
             .$DiffRenderSourceFunction($in, $out, 1)
             ."</div>";
-        else $html .= MarkupToHTML($pagename,
-            preg_replace('/\\(:.*?:\\)/e',"Keep(htmlspecialchars(PSS('$0')))",join("\n",$out)));
+			
+		// migrate from php 5.4 to 5.5
+        // else $html .= MarkupToHTML($pagename,
+        //     preg_replace('/\\(:.*?:\\)/e',"Keep(htmlspecialchars(PSS('$0')))",join("\n",$out)));
+		else $html .= MarkupToHTML($pagename,
+          PPRE('/\\(:.*?:\\)/',"Keep(PHSC(PSS(\$m[0])))",join("\n",$out)));
+			
         }
       $html .= FmtPageName($DiffEndDelAddFmt,$pagename);
       }

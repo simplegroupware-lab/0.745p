@@ -433,7 +433,13 @@ private static function _encodeHeaders($input) {
   foreach ($input as $hdr_name => $hdr_value) {
     preg_match_all("/(\w*[\x80-\xFF]+\w*)/", $hdr_value, $matches);
     foreach ($matches[1] as $value) {
-      $replacement = preg_replace("/([\x80-\xFF])/e",'"=".strtoupper(dechex(ord("\1")))',$value);
+		
+	  // migrate from php 5.4 to 5.5
+	  // TODO
+      // $replacement = preg_replace("/([\x80-\xFF])/e",'"=".strtoupper(dechex(ord("\1")))',$value);
+      $replacement = preg_replace_callback("/([\x80-\xFF])",function($m) {return "=".strtoupper(dechex(ord($m[1])))},$value);
+	  
+	  
       $hdr_value = str_replace($value,"=?UTF-8?Q?".$replacement."?=",$hdr_value);
     }
     $input[$hdr_name] = $hdr_value;

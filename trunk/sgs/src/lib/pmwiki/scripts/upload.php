@@ -124,8 +124,11 @@ function MakeUploadName($pagename,$x) {
     '/\\.[^.]*$/e' => 'strtolower("$0")',
     '/^[^[:alnum:]_]+/' => '',
     '/[^[:alnum:]_]+$/' => ''));
-   return preg_replace(array_keys($MakeUploadNamePatterns),
-            array_values($MakeUploadNamePatterns), $x);
+	
+   // migrate from php 5.4 to 5.5
+   // return preg_replace(array_keys($MakeUploadNamePatterns),
+   //         array_values($MakeUploadNamePatterns), $x);		
+   return PPRA($MakeUploadNamePatterns, $x);			
 }
 
 function LinkUpload($pagename, $imap, $path, $alt, $txt, $fmt=NULL) {

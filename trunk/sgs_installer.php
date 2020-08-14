@@ -504,7 +504,7 @@ class Archive_Tar
 			$v_checksum += ord(' ');
 		for ($i=156; $i<512; $i++)
 		   $v_checksum+=ord(substr($v_binary_data,$i,1));
-		$v_data = unpack("a100filename/a8mode/a8uid/a8gid/a12size/a12mtime/"
+		$v_data = unpack("Z100filename/a8mode/a8uid/a8gid/a12size/a12mtime/"
 						 ."a8checksum/a1typeflag/a100link/a6magic/a2version/"
 						 ."a32uname/a32gname/a8devmajor/a8devminor",
 						 $v_binary_data);

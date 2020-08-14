@@ -403,7 +403,10 @@ class Mail_mimePart {
             $search  = array('%',   ' ',   "\t");
             $replace = array('%25', '%20', '%09');
             $encValue = str_replace($search, $replace, $value);
-            $encValue = preg_replace('#([\x80-\xFF])#e', '"%" . strtoupper(dechex(ord("\1")))', $encValue);
+
+            // migrate from php 5.4 to 5.5
+            // $encValue = preg_replace('#([\x80-\xFF])#e', '"%" . strtoupper(dechex(ord("\1")))', $encValue);
+            $encValue = preg_replace_callback('#([\x80-\xFF])#', function($m) { return "%" . strtoupper($m[1]); }, $encValue);
             $value = "$charset'$language'$encValue";
             $secondAsterisk = '*';
         }
