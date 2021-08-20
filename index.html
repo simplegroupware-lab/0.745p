@@ -30,6 +30,7 @@
 -->
           <a href="https://github.com/simplegroupware-lab/0.745p/raw/master/branches/0.745p/SimpleGroupware_0.745.tar" id="download-tar-gz" class="button"><span>0.745p.tar (php 7.4)</span></a>
           <a href="https://github.com/simplegroupware-lab/0.745p/raw/master/branches/0.745p/SimpleGroupware_0.745.zip" id="download-tar-gz" class="button"><span>0.745p.zip (php 7.4)</span></a>
+          <a href="https://github.com/simplegroupware-lab/0.745p/raw/master/branches/0.745p/update_v0745_to_php74.php" id="download-tar-gz" class="button"><span>update_v0745_to_php74.php</span></a>
         </section>
 
         <section id="downloads" class="clearfix">
@@ -47,8 +48,15 @@
           <h1><a name="changes" class="anchor" href="#changes"><span class="octicon octicon-link"></span></a>Update from PHP 5.3.29 to PHP 7.4</h1>
 
           <ul>
-            <li>coming soon</li>
-            <li>Support on Google Groups Simple Groupware</li>
+            <li>1. make a full copy of your sgs directory</li>
+            <li>2. copy the update-script into directory sgs/bin</li>
+            <li>3. login as admin and clean the caches</li>
+            <li>4. run the script sgs/bin/update_v0745_to_php74.php</li>
+            <li>5. unpack the latest patched archive into directory sgs/simple_cache/update_to_php74</li>
+            <li>6. click Continue</li>
+            <li>7. switch your php environment to php 7.4 and click Continue</li>
+            <li>8. if anything goes wrong, simply restore your backuped sgs directory</li>
+            <li>9. Support on Google Groups Simple Groupware</li>
           </ul>
 
           <hr>
